@@ -1,0 +1,31 @@
+{
+  "name": "server.js",
+  "version": "1.0.0",
+  "description": "Real Time Chant applicaton version 1",
+  "keywords": [
+    "Chat",
+    "app",
+    "mern"
+  ],
+  "homepage": "https://github.com/shahilvermav02-source/Real-Time-Chat-Application#readme",
+  "bugs": {
+    "url": "https://github.com/shahilvermav02-source/Real-Time-Chat-Application/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shahilvermav02-source/Real-Time-Chat-Application.git"
+  },
+  "license": "ISC",
+  "author": "Shahil Verma",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "dev ",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "i": "^0.3.7"
+  }
+}
