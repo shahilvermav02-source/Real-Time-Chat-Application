@@ -1,5 +1,5 @@
 {
-  "name": "server.js",
+  "name": "Real_Time_Chat_Application",
   "version": "1.0.0",
   "description": "Real Time Chant applicaton version 1",
   "keywords": [
@@ -23,9 +23,16 @@
     "test": "dev ",
     "start": "node server.js"
   },
+  "devDependencies": {
+    "bcrypt": "^6.0.0",
+    "jsonwebtoken": "^9.0.3",
+    "nodemon": "^3.1.14"
+  },
   "dependencies": {
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "i": "^0.3.7"
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "mongoose": "^9.7.1",
+    "redis": "^6.0.0",
+    "socket.io": "^4.8.3"
   }
 }
