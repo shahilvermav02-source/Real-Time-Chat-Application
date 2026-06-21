@@ -20,16 +20,11 @@ const createRoom = asyncHandler(async (req, res) => {
 
 const joinRoom = asyncHandler(async (req, res) => {
   const { roomId } = req.params;
-
-  if (!room) {
-    //through api error
+  const isthereroom = await Room.findById(roomId);
+  if (!isthereroom) {
+    throw new ApiError(401, "room does not exist");
   }
-  const alreadyMember = room.members.some((member) =>
-    member.equals(req.user._id)
-  );
-  if (!alreadyMember) {
-  }
-  const room = await Room.findOneAndUpdate(
+  const Addmember = await Room.findOneAndUpdate(
     {
       _id: roomId,
       members: { $ne: req.user._id },
@@ -43,12 +38,14 @@ const joinRoom = asyncHandler(async (req, res) => {
       new: true,
     }
   );
-  return res.status(200).json(
+  if (!Addmember) {
+    throw new ApiError(401, "Member is already part of the chat");
+  }
+  return res.status(201).json(
     new ApiResponse(
       201,
       {
-        room,
-        userId: req.user._id,
+        Addmember,
       },
       "Room joined Successfully"
     )
