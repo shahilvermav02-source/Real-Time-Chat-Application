@@ -20,8 +20,8 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "test": "dev ",
-    "start": "node server.js"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
   },
   "devDependencies": {
     "bcrypt": "^6.0.0",
@@ -32,6 +32,8 @@
   "dependencies": {
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
     "mongoose": "^9.7.1",
     "redis": "^6.0.0",
     "socket.io": "^4.8.3"
