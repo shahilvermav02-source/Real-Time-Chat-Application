@@ -1,13 +1,25 @@
 import jwt from "jsonwebtoken";
-import { asyncHandler } from "../utils/async_handler.js";
-import { ApiError } from "../utils/api_error";
+import { ApiError } from "../utils/api_error.js";
+import dotenv from "dotenv";
 
-const socketAuth = asyncHandlers(async (req, res) => {
-  const token = socketAuth.handsake.auth.token;
-  if (!token) {
-    throw new ApiError(409, "unauthorized");
+const socketAuth = (socket, next) => {
+  try {
+    const token = socket.handshake.auth?.token;
+    console.log("Token:", token);
+
+    if (!token) {
+      return next(new ApiError(409, "unauthorized"));
+    }
+
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    socket.user = decoded;
+    console.log("Socket User:", socket.user);
+
+    next();
+  } catch (error) {
+    console.error("Auth Error:", error.message);
+    next(new Error(error.message || "Authentication failed"));
   }
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  socket.user = decoded;
-  next();
-});
+};
+
+export default socketAuth;

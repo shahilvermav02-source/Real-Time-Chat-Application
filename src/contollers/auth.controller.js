@@ -1,7 +1,7 @@
 import { User } from "../models/user.models.js";
 import { ApiResponse } from "../utils/api_response.js";
-import { ApiError } from "../utils/api-error.js";
-import { asyncHandler } from "../utils/async-handler.js";
+import { ApiError } from "../utils/api_error.js";
+import { asyncHandler } from "../utils/async_handler.js";
 
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
@@ -22,10 +22,10 @@ const generateAccessAndRefreshTokens = async (userId) => {
 
 const registerUser = asyncHandler(async (req, res) => {
   const { email, username, password } = req.body;
-  const existedUser = await User.findById({
-    $or: [{ username }, { email }],
+  const existingUser = await User.findOne({
+    $or: [{ email: email }, { username: username }],
   });
-  if (!existedUser) {
+  if (existingUser) {
     throw new ApiError(409, "User with email or username already exists", []);
   }
   const user = await User.create({
@@ -54,11 +54,11 @@ const login = asyncHandler(async (req, res) => {
   if (!username && !email) {
     throw new ApiError(400, "Username or email is required for login");
   }
-  const user = User.findOne({ email });
+  const user = await User.findOne({ email });
   if (!user) {
     throw new ApiError(400, "User Not Found");
   }
-  const isPasswordVaild = await User.isPasswordCorrect(password);
+  const isPasswordVaild = await user.isPasswordCorrect(password);
   if (!isPasswordVaild) {
     throw new ApiError(400, "Password is Incorrect!");
   }

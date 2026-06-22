@@ -3,12 +3,20 @@ import app from "./app.js";
 import http from "http";
 import { initializeSocket } from "./Socket/socket.js";
 import { socketHandler } from "./Socket/socketHandler.js";
+import connectDB from "./configs/db.js";
 dotenv.config();
 const server = http.createServer(app);
 const io = initializeSocket(server);
 socketHandler(io);
 const PORT = process.env.PORT || 8000;
 
-server.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`);
-});
+connectDB()
+  .then(() => {
+    server.listen(PORT, () => {
+      console.log(`Server running on ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Error connecting to MongoDB:", error);
+    process.exit(1);
+  });

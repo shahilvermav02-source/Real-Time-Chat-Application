@@ -1,4 +1,4 @@
-import { Room } from "../models/room.models";
+import { Room } from "../models/room.models.js";
 import { ApiError } from "../utils/api_error.js";
 import { ApiResponse } from "../utils/api_response.js";
 import { asyncHandler } from "../utils/async_handler.js";
@@ -9,7 +9,7 @@ const createRoom = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Room Cant be empty");
   }
   const room = await Room.create({
-    name: Roomname,
+    name: roomName,
     members: [req.user._id],
   });
 
@@ -20,10 +20,6 @@ const createRoom = asyncHandler(async (req, res) => {
 
 const joinRoom = asyncHandler(async (req, res) => {
   const { roomId } = req.params;
-  const isthereroom = await Room.findById(roomId);
-  if (!isthereroom) {
-    throw new ApiError(401, "room does not exist");
-  }
   const Addmember = await Room.findOneAndUpdate(
     {
       _id: roomId,
@@ -39,7 +35,10 @@ const joinRoom = asyncHandler(async (req, res) => {
     }
   );
   if (!Addmember) {
-    throw new ApiError(401, "Member is already part of the chat");
+    throw new ApiError(
+      401,
+      "Room doesnot Exist or Member is already part of the chat"
+    );
   }
   return res.status(201).json(
     new ApiResponse(
@@ -58,14 +57,14 @@ const leaveRoom = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Room Not found");
   }
   const isMember = roomExists.members.some((member) =>
-    member.equals({ members: req.user._id })
+    member.equals(req.user._id)
   );
   if (!isMember) {
     throw new ApiError(400, "Not A member of this group");
   }
   const updateRoomMember = await Room.findByIdAndUpdate(roomId, {
     $pull: {
-      members: req.user.id,
+      members: req.user._id,
     },
   });
 
@@ -79,3 +78,5 @@ const leaveRoom = asyncHandler(async (req, res) => {
     )
   );
 });
+
+export { joinRoom, createRoom, leaveRoom };
