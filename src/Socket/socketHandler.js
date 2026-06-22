@@ -1,4 +1,5 @@
 import { Room } from "../models/room.models.js";
+import { Message } from "../models/message.models.js";
 const socketHandler = (io) => {
   io.on("connection", (socket) => {
     console.log(`User Connected : ${socket.id}`);
@@ -7,8 +8,6 @@ const socketHandler = (io) => {
       console.log(`User Disconnected : ${socket.id}`);
     });
     socket.on("join-room", async (roomId) => {
-      console.log("join-room event received");
-      console.log(roomId);
       try {
         const userId = socket.user._id;
         const room = await Room.findOne({
@@ -34,6 +33,43 @@ const socketHandler = (io) => {
       } catch (error) {
         socket.emit("join-room-error", {
           message: "Failed to join room",
+        });
+      }
+    });
+
+    socket.on("send-message", async (data) => {
+      try {
+        const { roomId, message } = data;
+        console.log(message);
+        if (!message?.trim()) {
+          return socket.emit("send-message-error", {
+            message: "Message cannot be empty",
+          });
+        }
+        const room = await Room.findOne({
+          _id: roomId,
+          members: socket.user._id,
+        });
+        if (!room) {
+          return socket.emit("send-message-error", {
+            message: "Member not part of the chat",
+          });
+        }
+        const Savedmessage = await Message.create({
+          sender: socket.user._id,
+          room: roomId,
+          content: message,
+        });
+        const populatedMessage = await Message.findById(
+          Savedmessage._id
+        ).populate("sender", "username");
+
+        io.to(roomId).emit("receive-message", populatedMessage);
+      } catch (error) {
+        console.error(error);
+
+        socket.emit("send-message-error", {
+          message: "Failed to send message",
         });
       }
     });

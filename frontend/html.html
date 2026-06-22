@@ -363,12 +363,17 @@
         console.log("Connected");
         socket.emit("join-room", "6a38f0ffc4fe94714fb1b078");
       });
-      socket.on("test-message", (msg) => {
-        console.log("Received:", msg);
-      });
       socket.on("joined-room", (data) => {
         console.log("Successfully joined room");
         console.log(data);
+        // NOW send the message after successfully joining the room
+        socket.emit("send-message", {
+          roomId: "6a38f0ffc4fe94714fb1b078",
+          message: "Hello Shahil",
+        });
+      });
+      socket.on("receive-message", (msg) => {
+        console.log("Message received:", msg);
       });
       socket.on("join-room-error", (data) => {
         console.log("Join failed");
