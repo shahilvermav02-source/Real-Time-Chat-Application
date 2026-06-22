@@ -1,3 +1,4 @@
+import { Room } from "../models/room.models.js";
 const socketHandler = (io) => {
   io.on("connection", (socket) => {
     console.log(`User Connected : ${socket.id}`);
@@ -20,6 +21,10 @@ const socketHandler = (io) => {
           });
         }
         socket.join(roomId);
+        io.to(roomId).emit(
+          "test-message",
+          `${socket.user.username} joined room`
+        );
 
         socket.emit("joined-room", {
           roomId,

@@ -363,11 +363,13 @@
         console.log("Connected");
         socket.emit("join-room", "6a38f0ffc4fe94714fb1b078");
       });
+      socket.on("test-message", (msg) => {
+        console.log("Received:", msg);
+      });
       socket.on("joined-room", (data) => {
         console.log("Successfully joined room");
         console.log(data);
       });
-
       socket.on("join-room-error", (data) => {
         console.log("Join failed");
         console.log(data);
