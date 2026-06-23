@@ -48,6 +48,7 @@ function ChatApp({ currentUser, onLogout }) {
         currentUser={currentUser}
         userRooms={userRooms}
         currentRoom={currentRoom}
+        onlineUsers={[]}
         onRoomSelect={setCurrentRoom}
         onRoomCreated={handleRoomCreated}
         onRoomJoined={handleRoomJoined}

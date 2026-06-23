@@ -5,11 +5,18 @@ import MessageInput from "./MessageInput";
 function ChatRoom({ currentRoom, currentUser, userRooms, socket }) {
   const [messages, setMessages] = useState([]);
   const [roomDetails, setRoomDetails] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!currentRoom || !socket) return;
 
     setMessages([]);
+    setLoading(true);
+
+    // Fetch message history
+    fetchMessageHistory();
+
+    // Join room
     socket.emit("join-room", currentRoom);
 
     const room = userRooms.find((r) => r._id === currentRoom);
@@ -17,6 +24,30 @@ function ChatRoom({ currentRoom, currentUser, userRooms, socket }) {
       setRoomDetails(room);
     }
   }, [currentRoom, socket]);
+
+  const fetchMessageHistory = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(
+        `http://localhost:8000/api/v1/message/${currentRoom}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+      const data = await res.json();
+      if (res.ok && data.data) {
+        setMessages(data.data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch message history:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!socket) return;
@@ -68,8 +99,28 @@ function ChatRoom({ currentRoom, currentUser, userRooms, socket }) {
         </div>
       </div>
 
-      <MessageList messages={messages} currentUser={currentUser} />
-      <MessageInput onSendMessage={handleSendMessage} />
+      {loading && (
+        <div
+          style={{
+            padding: "20px",
+            textAlign: "center",
+            color: "var(--text-secondary)",
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          Loading messages...
+        </div>
+      )}
+
+      {!loading && (
+        <>
+          <MessageList messages={messages} currentUser={currentUser} />
+          <MessageInput onSendMessage={handleSendMessage} />
+        </>
+      )}
     </div>
   );
 }

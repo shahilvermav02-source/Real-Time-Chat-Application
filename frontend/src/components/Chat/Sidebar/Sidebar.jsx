@@ -5,11 +5,13 @@ function Sidebar({
   currentUser,
   userRooms,
   currentRoom,
+  onlineUsers,
   onRoomSelect,
   onRoomCreated,
   onRoomJoined,
   onLogout,
 }) {
+  const isUserOnline = onlineUsers?.some((u) => u.userId === currentUser?._id);
   return (
     <div className="sidebar">
       <div className="sidebar-header">
@@ -25,7 +27,9 @@ function Sidebar({
         </div>
         <div className="user-details">
           <div className="user-name">{currentUser?.username}</div>
-          <div className="user-status">Online</div>
+          <div className={`user-status ${isUserOnline ? "online" : ""}`}>
+            {isUserOnline ? "🟢 Online" : "Offline"}
+          </div>
         </div>
       </div>
 

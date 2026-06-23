@@ -1,12 +1,11 @@
 import { Room } from "../models/room.models.js";
 import { Message } from "../models/message.models.js";
+import { handlePresence } from "./presence.Socket.js";
 const socketHandler = (io) => {
   io.on("connection", (socket) => {
     console.log(`User Connected : ${socket.id}`);
+    handlePresence(io, socket);
 
-    socket.on("disconnect", () => {
-      console.log(`User Disconnected : ${socket.id}`);
-    });
     socket.on("join-room", async (roomId) => {
       try {
         const userId = socket.user._id;
@@ -72,6 +71,10 @@ const socketHandler = (io) => {
           message: "Failed to send message",
         });
       }
+    });
+
+    socket.on("typing", (roomId) => {
+      socket.to(roomId).emit("user-typing", socket.user.username);
     });
   });
 };
