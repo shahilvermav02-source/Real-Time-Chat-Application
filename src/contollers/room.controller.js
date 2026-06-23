@@ -18,6 +18,16 @@ const createRoom = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, room, "Room created successfully"));
 });
 
+const getUserRooms = asyncHandler(async (req, res) => {
+  const rooms = await Room.find({
+    members: req.user._id,
+  }).populate("members", "username email");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, rooms, "User rooms fetched successfully"));
+});
+
 const joinRoom = asyncHandler(async (req, res) => {
   const { roomId } = req.params;
   const Addmember = await Room.findOneAndUpdate(
@@ -79,4 +89,4 @@ const leaveRoom = asyncHandler(async (req, res) => {
   );
 });
 
-export { joinRoom, createRoom, leaveRoom };
+export { joinRoom, createRoom, leaveRoom, getUserRooms };
