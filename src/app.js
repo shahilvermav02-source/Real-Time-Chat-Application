@@ -2,6 +2,7 @@ import express from "express";
 import path from "path";
 import authRouter from "./routes/auth.route.js"; //in that file default export is used so you define your name when importing it here
 import roomRouter from "./routes/room.route.js";
+import messageRouter from "./routes/message.route.js";
 import cookieParser from "cookie-parser";
 const app = express();
 
