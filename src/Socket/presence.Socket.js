@@ -8,7 +8,7 @@ const handlePresence = (io, socket) => {
   });
 
   socket.on("disconnect", () => {
-    onlineUser.delete(socket.user._id.toString(), socket.id);
+    onlineUser.delete(socket.user._id.toString());
     io.emit("user-offline", {
       userId: socket.user._id,
       username: socket.user.username,
