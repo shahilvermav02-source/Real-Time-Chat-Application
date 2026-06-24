@@ -13,8 +13,7 @@ redis.subscribe("upcoming-messages", (err) => {
 const initializeSubscriber = (io) => {
   redis.on("message", (channel, message) => {
     const parsedMessage = JSON.parse(message);
-
-    io.to(parsedMessage.roomId).emit("receive-message", parsedMessage);
+    io.to(parsedMessage.roomId).emit("receive-message", parsedMessage.message);
   });
 };
 

@@ -9,6 +9,7 @@ const socketHandler = (io) => {
 
     socket.on("join-room", async (roomId) => {
       try {
+        socket.join(roomId);
         const userId = socket.user._id;
         const room = await Room.findOne({
           _id: roomId,
@@ -20,10 +21,6 @@ const socketHandler = (io) => {
           });
         }
         socket.join(roomId);
-        io.to(roomId).emit(
-          "test-message",
-          `${socket.user.username} joined room`
-        );
 
         socket.emit("joined-room", {
           roomId,
@@ -40,7 +37,6 @@ const socketHandler = (io) => {
     socket.on("send-message", async (data) => {
       try {
         const { roomId, message } = data;
-        console.log(message);
         if (!message?.trim()) {
           return socket.emit("send-message-error", {
             message: "Message cannot be empty",
@@ -63,8 +59,10 @@ const socketHandler = (io) => {
         const populatedMessage = await Message.findById(
           Savedmessage._id
         ).populate("sender", "username");
-
-        publishmessage(populatedMessage);
+        await publishmessage({
+          roomId: roomId,
+          message: populatedMessage,
+        });
       } catch (error) {
         console.error(error);
 
