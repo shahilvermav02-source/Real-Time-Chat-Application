@@ -10,6 +10,12 @@ redis.subscribe("upcoming-messages", (err) => {
   console.log("Subscribed successfully");
 });
 
-redis.on("message", (channel, message) => {
-  console.log("Recevied on ", channel, ":", JSON.parse(message));
-});
+const initializeSubscriber = (io) => {
+  redis.on("message", (channel, message) => {
+    const parsedMessage = JSON.parse(message);
+
+    io.to(parsedMessage.roomId).emit("receive-message", parsedMessage);
+  });
+};
+
+export { initializeSubscriber };

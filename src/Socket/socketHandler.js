@@ -1,6 +1,7 @@
 import { Room } from "../models/room.models.js";
 import { Message } from "../models/message.models.js";
 import { handlePresence } from "./presence.Socket.js";
+import { publishmessage } from "../Services/redisPublisher.js";
 const socketHandler = (io) => {
   io.on("connection", (socket) => {
     console.log(`User Connected : ${socket.id}`);
@@ -63,7 +64,7 @@ const socketHandler = (io) => {
           Savedmessage._id
         ).populate("sender", "username");
 
-        io.to(roomId).emit("receive-message", populatedMessage);
+        publishmessage(populatedMessage);
       } catch (error) {
         console.error(error);
 
